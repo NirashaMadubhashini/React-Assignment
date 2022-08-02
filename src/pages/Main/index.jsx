@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { styled, useTheme } from '@mui/material/styles';
+import {useEffect} from 'react';
+import {styled, useTheme} from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -19,17 +20,15 @@ import ListItemText from '@mui/material/ListItemText';
 import CategoryIcon from '@mui/icons-material/Category';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import PersonIcon from '@mui/icons-material/Person';
-import MainPanel from "../Main";
 import Product from "../Product";
 import Cart from "../cart";
 import User from "../User";
-import {useEffect} from "react";
-import Dashboard from "../DashBoard";
+import MainDash from "../DashBoard";
 
 const drawerWidth = 240;
 
-const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
-    ({ theme, open }) => ({
+const Main = styled('main', {shouldForwardProp: (prop) => prop !== 'open'})(
+    ({theme, open}) => ({
         flexGrow: 1,
         padding: theme.spacing(3),
         transition: theme.transitions.create('margin', {
@@ -49,7 +48,7 @@ const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
 
 const AppBar = styled(MuiAppBar, {
     shouldForwardProp: (prop) => prop !== 'open',
-})(({ theme, open }) => ({
+})(({theme, open}) => ({
     transition: theme.transitions.create(['margin', 'width'], {
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.leavingScreen,
@@ -64,7 +63,7 @@ const AppBar = styled(MuiAppBar, {
     }),
 }));
 
-const DrawerHeader = styled('div')(({ theme }) => ({
+const DrawerHeader = styled('div')(({theme}) => ({
     display: 'flex',
     alignItems: 'center',
     padding: theme.spacing(0, 1),
@@ -73,12 +72,12 @@ const DrawerHeader = styled('div')(({ theme }) => ({
     justifyContent: 'flex-end',
 }));
 
-export default function MainDash() {
+export default function DashBoard() {
     const theme = useTheme();
     const [open, setOpen] = React.useState(false);
-    const [isProduct,setProduct]=React.useState(false);
-    const [isCart,setCart]=React.useState(false);
-    const [isUser,setUser]=React.useState(false);
+    const [isUser, setUser] = React.useState(false);
+    const [isProduct, setProduct] = React.useState(false);
+    const [isCart, setCart] = React.useState(false);
 
 
     useEffect(() => {
@@ -95,39 +94,39 @@ export default function MainDash() {
 
     const ListItemBtnToggle = (index) => {
         let dowerBtnName = getDowerBtnName(index);
-        if (dowerBtnName === 'product') {
-            setProduct(true)
-            setCart(false)
-            setUser(false)
-        } else if (dowerBtnName === 'cart') {
-            setProduct(false)
-            setCart(true)
-            setUser(false)
-        } else {
+        if (dowerBtnName === 'user') {
             setProduct(false)
             setCart(false)
             setUser(true)
+        } else if (dowerBtnName === 'product') {
+            setProduct(true)
+            setCart(false)
+            setUser(false)
+        } else {
+            setProduct(false)
+            setCart(true)
+            setUser(false)
         }
 
     }
 
     const getDowerBtnName = (name) => {
         switch (name) {
+            case 'User':
+                return 'user'
             case 'Product':
                 return 'product'
             case 'Cart':
                 return 'cart'
-            case 'User':
-                return 'user'
             default:
                 return ''
         }
     }
 
     return (
-        <MainPanel>
-            <Box sx={{ display: 'flex' }}>
-                <CssBaseline />
+        <Typography>
+            <Box sx={{display: 'flex'}}>
+                <CssBaseline/>
                 <AppBar position="fixed" open={open} color='secondary'>
                     <Toolbar>
                         <IconButton
@@ -135,9 +134,9 @@ export default function MainDash() {
                             aria-label="open drawer"
                             onClick={handleDrawerOpen}
                             edge="start"
-                            sx={{ mr: 2, ...(open && { display: 'none' }) }}
+                            sx={{mr: 2, ...(open && {display: 'none'})}}
                         >
-                            <MenuIcon />
+                            <MenuIcon/>
                         </IconButton>
                         <Typography variant="h6" noWrap component="div">
                             User
@@ -163,20 +162,20 @@ export default function MainDash() {
                             DashBoard
                         </Typography>
                         <IconButton onClick={handleDrawerClose}>
-                            {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+                            {theme.direction === 'ltr' ? <ChevronLeftIcon/> : <ChevronRightIcon/>}
                         </IconButton>
                     </DrawerHeader>
-                    <Divider />
+                    <Divider/>
                     <List>
-                        {['Product', 'Cart', 'User'].map((text, index) => (
+                        {['User', 'Product', 'Cart'].map((text, index) => (
                             <ListItem key={text} disablePadding>
-                                <ListItemButton>
+                                <ListItemButton onClick={() => ListItemBtnToggle(text)}>
                                     <ListItemIcon>
-                                        {index === 0 ? <CategoryIcon/> :
-                                            index === 1 ? <AddShoppingCartIcon/> : <PersonIcon/>
+                                        {index === 0 ? <PersonIcon/> :
+                                            index === 1 ? <CategoryIcon/> : <AddShoppingCartIcon/>
                                         }
                                     </ListItemIcon>
-                                    <ListItemText primary={text} />
+                                    <ListItemText primary={text}/>
                                 </ListItemButton>
                             </ListItem>
                         ))}
@@ -184,11 +183,11 @@ export default function MainDash() {
                 </Drawer>
             </Box>
             {
-                isProduct ? <Product/> :
-                    isCart ? <Cart/> :
-                        isUser ? <User/>:
-                            <Dashboard/>
+                isUser ? <User/> :
+                    isProduct ? <Product/> :
+                        isCart ? <Cart/> :
+                            <MainDash/>
             }
-        </MainPanel>
+        </Typography>
     );
 }
