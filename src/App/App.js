@@ -2,11 +2,11 @@ import {BrowserRouter} from "react-router-dom";
 import {Route, Routes} from "react-router";
 import React from "react";
 import LogingSection from "../pages/Loging";
-import SignUp from "../pages/Loging/SignUp";
 import DashBoard from "../pages/Main";
 import User from "../pages/User";
 import Product from "../pages/Product";
 import Cart from "../pages/cart";
+import SignUp from "../pages/Loging/signUp";
 
 function App() {
   return (
