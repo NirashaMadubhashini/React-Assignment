@@ -1,27 +1,27 @@
 import Grid from "@mui/material/Grid";
-import React from "react";
+import RubberBtn from "../../component/common/RubberBandBtn";
 import Card from "@mui/material/Card";
 import CardActionArea from "@mui/material/CardActionArea";
 import CardMedia from "@mui/material/CardMedia";
+import Products from "../../assets/img/items.jpg";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
-import RubberBtn from "../../component/common/RubberBandBtn";
-import Product from "../../assets/img/items.jpg";
-import Cart from "../../assets/img/cart.jpg";
-import User from "../../assets/img/user.jpg";
+import Carts from "../../assets/img/cart.jpg";
+import Users from "../../assets/img/user.jpg";
+import * as React from "react";
 
-export default function Dashboard() {
-    return (
+export default function MainDash() {
+    return(
         <div>
-            <Grid item lg={12} xs={12} sm={12} md={12} mt={5} sx={{fontSize:30}}>
+            <Grid item lg={12} xs={12} sm={12} md={12} sx={{mt:15,fontSize:25}}>
                 <RubberBtn name="DashBoard"/>
             </Grid>
-            <Card sx={{ maxWidth: 345,ml:25,mt:20 }}>
+            <Card sx={{ maxWidth: 345,ml:25,mt:10 }}>
                 <CardActionArea>
                     <CardMedia
                         component="img"
                         height="140"
-                        image={Product}
+                        image={Products}
                         alt="green iguana"
                     />
                     <CardContent>
@@ -40,7 +40,7 @@ export default function Dashboard() {
                     <CardMedia
                         component="img"
                         height="140"
-                        image={Cart}
+                        image={Carts}
                         alt="green iguana"
                     />
                     <CardContent>
@@ -59,7 +59,7 @@ export default function Dashboard() {
                     <CardMedia
                         component="img"
                         height="140"
-                        image={User}
+                        image={Users}
                         alt="green iguana"
                     />
                     <CardContent>
@@ -72,7 +72,7 @@ export default function Dashboard() {
                     </CardContent>
                 </CardActionArea>
             </Card>
-
         </div>
     )
+
 }
