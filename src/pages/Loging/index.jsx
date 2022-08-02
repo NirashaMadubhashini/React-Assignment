@@ -36,7 +36,7 @@ const Login=()=>{
                             Forgot password ?
                         </Link>
                     </Typography>
-                    <Link href="" underline="none">
+                    <Link href="dash" underline="none">
                     <Button type='submit' color='secondary' variant="contained" sx={{mt:5}} fullWidth>Sign in</Button>
                     </Link>
                     <Typography sx={{mt:2,ml:10}}> Do you have an account ?
