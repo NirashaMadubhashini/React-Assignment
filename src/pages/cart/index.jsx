@@ -9,8 +9,8 @@ import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
-import {DatePicker} from "@mui/x-date-pickers";
-
+import {DatePicker, LocalizationProvider} from "@mui/x-date-pickers";
+import {AdapterDateFns} from "@mui/x-date-pickers/AdapterDateFns";
 
 
 const Cart = ({}) => {
@@ -58,7 +58,6 @@ const Cart = ({}) => {
     const [value, setValue] = React.useState(null);
 
 
-
     return (
 
         <div>
@@ -97,51 +96,55 @@ const Cart = ({}) => {
                         </Select>
                     </FormControl>
 
-                    {/*<DatePicker*/}
-                    {/*    label="Basic example"*/}
-                    {/*    value={value}*/}
-                    {/*    onChange={(newValue) => {*/}
-                    {/*        setValue(newValue);*/}
-                    {/*    }}*/}
-                    {/*    renderInput={(params) => <TextField {...params} />}*/}
-                    {/*/>*/}
-
-                        <FormControl sx={{m: 2, width: 220, mt: 5, ml: 12}} size="large">
-                            <InputLabel id="productTitle">Product Title</InputLabel>
-                            <Select
-                                labelId="productTitle"
-                                id="productTitle"
-                                value={productTitle}
-                                label="Product Title"
-                                onChange={handleChange}
-                            >
-                                <MenuItem value="">
-                                    <em>None</em>
-                                </MenuItem>
-                                <MenuItem value={10}>Ten</MenuItem>
-                                <MenuItem value={20}>Twenty</MenuItem>
-                                <MenuItem value={30}>Thirty</MenuItem>
-                            </Select>
-                        </FormControl>
-
-                        <Grid item sx={{mt: 5, ml: 45}}>
-                            <TextField id="outlined-basic" label="Qty" variant="outlined"
-                                       helperText="Enter Qty" name="qty"
-                                       onChange={handleInputChange}
-                                       value={formValues.qty}
+                    <FormControl sx={{m: 2, width: 220, mt: 5, ml: 12}} size="large">
+                        <LocalizationProvider dateAdapter={AdapterDateFns}>
+                            <DatePicker
+                                label="Basic example"
+                                value={value}
+                                onChange={(newValue) => {
+                                    setValue(newValue);
+                                }}
+                                renderInput={(params) => <TextField {...params} />}
                             />
+                        </LocalizationProvider>
+                    </FormControl>
 
-                        </Grid>
+                    <FormControl sx={{m: 2, width: 220, mt: 5, ml: 12}} size="large">
+                        <InputLabel id="productTitle">Product Title</InputLabel>
+                        <Select
+                            labelId="productTitle"
+                            id="productTitle"
+                            value={productTitle}
+                            label="Product Title"
+                            onChange={handleChange}
+                        >
+                            <MenuItem value="">
+                                <em>None</em>
+                            </MenuItem>
+                            <MenuItem value={10}>Ten</MenuItem>
+                            <MenuItem value={20}>Twenty</MenuItem>
+                            <MenuItem value={30}>Thirty</MenuItem>
+                        </Select>
+                    </FormControl>
+
+                    <FormControl sx={{m: 2, width: 220, mt:8, ml: 12}} size="medium">
+                        <TextField id="outlined-basic" label="Qty" variant="outlined"
+                                   helperText="Enter Qty" name="qty"
+                                   onChange={handleInputChange}
+                                   value={formValues.qty}
+                        />
+
+                    </FormControl>
 
                 </Grid>
                 <div>
                     <div>
                         <Button color={btnColor} size="large" type="submit" variant="contained"
-                                sx={{ml: 15, mt: 10}}>
+                                sx={{ml: 15, mt: 5}}>
                             {btnLabel}
                         </Button>
                         <Button type="reset" variant="contained" color="success" size="large"
-                                sx={{ml: 3, mt: 10}}>
+                                sx={{ml: 3, mt: 5}}>
                             Clear
                         </Button>
                     </div>
@@ -149,7 +152,7 @@ const Cart = ({}) => {
                 </div>
             </Box>
         </div>
-)
+    )
 
 }
 

@@ -88,15 +88,15 @@ const Product = ({}) => {
                 <Grid container alignItems="center" justify="center" direction="row" spacing={2}
                       sx={{paddingLeft: 5, mt: 5}}
                 >
-                    <Grid item sx={{mt:5,ml:45}}>
-                        <TextField id="outlined-basic" label="UserName" variant="outlined"
+                    <Grid item sx={{mt:-20,ml:5}}>
+                        <TextField id="outlined-basic" label="Title" variant="outlined"
                                    helperText="Enter Title" name="title"
                                    onChange={handleInputChange}
                                    value={formValues.title}
                         />
 
                     </Grid>
-                    <Grid item sx={{mt:5,ml:10}}>
+                    <Grid item sx={{mt:-20,ml:10}}>
                         <TextField
                             helperText="Enter Price"
                             variant="outlined"
@@ -108,7 +108,7 @@ const Product = ({}) => {
                         />
                     </Grid>
 
-                    <FormControl sx={{m: 2, width: 220,mt:5,ml:12}} size="large">
+                    <FormControl sx={{m: 2, width: 220,mt:-19,ml:10}} size="large">
                         <InputLabel id="category">Category</InputLabel>
                         <Select
                             labelId="category"
@@ -126,32 +126,35 @@ const Product = ({}) => {
                         </Select>
                     </FormControl>
 
-                    <Grid item>
+                    <Grid item sx={{ml:5,mt:-20}}>
                         <TextareaAutosize
                             aria-label="empty textarea"
                             placeholder="Empty"
                             style={{width: 200}}
                         />
                     </Grid>
+                    <FormControl sx={{m: 2, width: 220,mt:15,ml:8}} size="large">
                         <Stack direction="row" spacing={2} >
                             <Avatar sx={{ bgcolor: green[500] ,width: 150, height: 150 ,mt:-12}} variant="rounded">
                                 <PersonIcon />
                             </Avatar>
-                            <Button size="large" type="submit" variant="contained" color="secondary" sx={{height:55}}>
-                               Choose Image
-                                <input hidden accept="image/*" multiple type="file" />
-                            </Button>
                         </Stack>
-
+                        <br/>
+                        <Button size="large" type="submit" variant="contained" color="secondary">
+                            Choose Image
+                            <input hidden accept="image/*" multiple type="file" />
+                        </Button>
+                    </FormControl>
                 </Grid>
                 <div>
                     <div>
                         <Button color={btnColor} size="large" type="submit" variant="contained"
-                                sx={{ml:50, mt:10}}>
+                                sx={{ml:15,mt:-25}}>
+
                             {btnLabel}
                         </Button>
                         <Button type="reset" variant="contained" color="success" size="large"
-                                sx={{ml: 3, mt:10}}>
+                                sx={{ml: 3, mt:-25}}>
                             Clear
                         </Button>
                     </div>
