@@ -274,7 +274,7 @@ const User = ({}) => {
 
     const [status, setStatus] = useState(statusObj);
 
-    const [btnLabel, setBtnLabel] = useState('Save');
+    const [btnLabel, setBtnLabel] = useState('Update');
 
     const [btnColor, setBtnColor] = useState('primary');
 
