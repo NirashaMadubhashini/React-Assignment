@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Divider from "@mui/material/Divider";
@@ -13,6 +13,28 @@ import PersonIcon from '@mui/icons-material/Person';
 import Avatar from "@mui/material/Avatar";
 import Stack from "@mui/material/Stack";
 import { deepOrange, green } from '@mui/material/colors';
+import {toast, ToastContainer} from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import ProductService from "../../services/ProductService";
+import AdminService from "../../services/AdminService";
+const defaultPosition = toast.POSITION.BOTTOM_CENTER;
+
+
+export const showToast = (type = "success", msg, autoClose = 2000, className = "primaryColor", position = defaultPosition) => {
+    if (type === "success") {
+        toast.success(msg, {
+            autoClose: autoClose === null ? 2000 : autoClose,
+            className: className === null ? "primaryColor" : className,
+            position: position,
+        });
+    } else if (type === "error") {
+        toast.error(msg, {
+            autoClose: autoClose === null ? 2000 : autoClose,
+            className: className === null ? "dangerColor" : className,
+            position: position,
+        });
+    }
+};
 
 const Product = ({}) => {
 
@@ -49,6 +71,14 @@ const Product = ({}) => {
 
     const [tblData, setTblData] = useState([]);
 
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+
+        await submitProduct();
+    }
+    useEffect(() => {
+        loadData();
+    }, [])
 
     const clearFields = () => {
 
@@ -62,6 +92,49 @@ const Product = ({}) => {
         });
     };
 
+    const submitProduct = async () => {
+
+        let dto = {};
+        dto = formValues;
+
+        if (btnLabel === "Add Product") {
+            let res = await ProductService.postProducts(dto);//customer service --> postCustomer()
+            console.log(res.status)
+
+            console.log("res Status", res.data)
+            if (res.data.code === 200) {
+
+                setStatus({
+                    alert: true,
+                    message: "S",
+                    severity: 'success'
+                })
+                showToast('success', 'saved successfully !');
+
+                loadData();
+                clearFields();
+
+            } else {
+                setStatus({
+                    alert: true,
+                    message: "E",
+                    severity: 'error'
+                });
+                console.log("not Equal")
+                showToast('error', 'Not Saved');
+            }
+        }
+    };
+
+    const loadData = async () => {
+        ProductService.fetchProducts().then((res) => {
+            if (res.status === 200) {
+
+            }
+        });
+    };
+
+
     const [category, setCategory] = React.useState('');
 
     const handleChange = (event) => {
@@ -71,6 +144,7 @@ const Product = ({}) => {
     return (
 
         <div>
+            <ToastContainer/>
             <Grid item lg={12} xs={12} sm={12} md={12} sx={{mt: 10}}>
                 <RubberBtn name="Product Manage"/>
             </Grid>
@@ -78,6 +152,7 @@ const Product = ({}) => {
 
             <Box
                 component="form"
+                onSubmit={handleSubmit}
                 sx={{
                     '& > :not(style)': {},
                 }}
@@ -113,9 +188,10 @@ const Product = ({}) => {
                         <Select
                             labelId="category"
                             id="category"
-                            value={category}
+                            value={formValues.category}
                             label="Category"
-                            onChange={handleChange}
+                            name="category"
+                            onChange={handleInputChange}
                         >
                             <MenuItem value="">
                                 <em>None</em>
@@ -153,7 +229,7 @@ const Product = ({}) => {
 
                             {btnLabel}
                         </Button>
-                        <Button type="reset" variant="contained" color="success" size="large"
+                        <Button onClick={clearFields} type="reset" variant="contained" color="success" size="large"
                                 sx={{ml: 3, mt:-25}}>
                             Clear
                         </Button>
