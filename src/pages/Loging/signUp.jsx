@@ -2,7 +2,9 @@ import React, {useState} from 'react'
 import TextField from "@mui/material/TextField";
 import {Avatar, Box, Button, Grid, Link, Paper, Typography} from "@mui/material";
 import LockOpenIcon from '@mui/icons-material/LockOpen';
-
+import {toast, ToastContainer} from 'react-toastify';
+import CustomerService from "../../services/CustomerService";
+import {showToast} from "../User";
 
 const SignUp = () => {
     const paperStyleContainer = {
@@ -36,6 +38,20 @@ const SignUp = () => {
         event.preventDefault();
     };
 
+    const initialValues = {
+        firstName: "",
+        lastName: "",
+        email: "",
+        username: "",
+        password: "",
+        city: "",
+        street: "",
+        streetNo: "",
+        zipCode: "",
+        latValue: "",
+        longValue: "",
+        mobileNo: "",
+    };
 
     const statusObj = {
         alert: false,
@@ -43,6 +59,15 @@ const SignUp = () => {
         severity: '',
     }
 
+    const handleInputChange = (e) => {
+        const {name, value} = e.target;
+        setFormValues({
+            ...formValues,
+            [name]: value,
+        });
+    };
+
+    const [formValues, setFormValues] = useState(initialValues);
 
     const [status, setStatus] = useState(statusObj);
 
@@ -56,11 +81,63 @@ const SignUp = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
 
+        await submitUser();
     }
+
+    const clearFields = () => {
+
+        setFormValues({
+            firstName: "",
+            lastName: "",
+            email: "",
+            username: "",
+            password: "",
+            city: "",
+            street: "",
+            streetNo: "",
+            zipCode: "",
+            latValue: "",
+            longValue: "",
+            mobileNo: "",
+
+        });
+    };
+
+    const submitUser = async () => {
+
+        let dto = {};
+        dto = formValues;
+        console.log("form Values",formValues)
+        let res = await CustomerService.postUser(formValues);
+        console.log(res.status)
+
+        console.log("res Status", res)
+        if (res.data === 200) {
+
+            setStatus({
+                alert: true,
+                message: "S",
+                severity: 'success'
+            })
+            showToast('success', 'saved successfully !');
+
+            clearFields();
+
+        } else {
+            setStatus({
+                alert: true,
+                message: "E",
+                severity: 'error'
+            });
+            console.log("not Equal")
+            showToast('error', 'Not Saved');
+        }
+    };
 
 
     return (
         <Grid>
+            <ToastContainer/>
             <Paper elevation={10} style={paperStyleContainer}>
                 <Grid align='center' sx={{mt: -1}}>
                     <Avatar style={avatarStyle}><LockOpenIcon/></Avatar>
@@ -82,73 +159,85 @@ const SignUp = () => {
                         <Grid item sx={{paddingLeft: 2}}>
                             <TextField label='FirstName' placeholder='Enter FirstName'
                                        name="firstName"
-                                       validators={['required']}
+                                       onChange={handleInputChange} validators={['required']}
+                                       value={formValues.firstName}
                             />
                         </Grid>
                         <Grid item sx={{paddingLeft: 2}}>
                             <TextField label='LastName' placeholder='Enter LastName'
                                        name="lastName"
-                                       validators={['required']}
+                                       onChange={handleInputChange} validators={['required']}
+                                       value={formValues.lastName}
                             />
                         </Grid>
                         <Grid item sx={{paddingLeft: 2}}>
                             <TextField label='Email' placeholder='Enter Email'
                                        name="email"
-                                       validators={['required']}
+                                       onChange={handleInputChange} validators={['required']}
+                                       value={formValues.email}
                             />
                         </Grid>
                         <Grid item sx={{paddingLeft: 2}}>
                             <TextField label='UserName' placeholder='Enter UserName'
                                        name="username"
-                                       validators={['required']}
+                                       onChange={handleInputChange} validators={['required']}
+                                       value={formValues.username}
                             />
                         </Grid>
                         <Grid item sx={{paddingLeft: 2}}>
                             <TextField label='Password' placeholder='Enter Password'
                                        name="password"
-                                       validators={['required']}
+                                       onChange={handleInputChange} validators={['required']}
+                                       value={formValues.password}
                             />
                         </Grid>
                         <Grid item sx={{paddingLeft: 2}}>
                             <TextField label='City' placeholder='Enter City'
                                        name="city"
-                                       validators={['required']}
+                                       onChange={handleInputChange} validators={['required']}
+                                       value={formValues.city}
                             />
                         </Grid>
                         <Grid item sx={{paddingLeft: 2}}>
                             <TextField label='Street' placeholder='Enter Street'
                                        name="street"
-                                       validators={['required']}
+                                       onChange={handleInputChange} validators={['required']}
+                                       value={formValues.street}
                             />
                         </Grid>
                         <Grid item sx={{paddingLeft: 2}}>
                             <TextField label='Street No' placeholder='Enter Street No'
                                        name="streetNo"
-                                       validators={['required']}
+                                       onChange={handleInputChange} validators={['required']}
+                                       value={formValues.streetNo}
                             />
                         </Grid>
                         <Grid item sx={{paddingLeft: 2}}>
                             <TextField label='Zip Code' placeholder='Enter Zip Code'
                                        name="zipCode"
-                                       validators={['required']}
+                                       onChange={handleInputChange} validators={['required']}
+                                       value={formValues.zipCode}
                             />
                         </Grid>
                         <Grid item sx={{paddingLeft: 2}}>
                             <TextField label='Lat Value' placeholder='Enter Lat Value'
                                        name="latValue"
-                                       validators={['required']}
+                                       onChange={handleInputChange} validators={['required']}
+                                       value={formValues.latValue}
                             />
                         </Grid>
                         <Grid item sx={{paddingLeft: 2}}>
                             <TextField label='Long Value' placeholder='Enter Long Value'
                                        name="longValue"
-                                       validators={['required']}
+                                       onChange={handleInputChange} validators={['required']}
+                                       value={formValues.longValue}
                             />
                         </Grid>
                         <Grid item sx={{paddingLeft: 2}}>
                             <TextField label='Mobile No' placeholder='Enter Mobile No'
                                        name="mobileNo"
-                                       validators={['required']}
+                                       validators={['required']}onChange={handleInputChange} validators={['required']}
+                                       value={formValues.mobileNo}
                             />
                         </Grid>
 
