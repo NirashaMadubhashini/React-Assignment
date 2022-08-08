@@ -20,8 +20,9 @@ import TableBody from "@mui/material/TableBody";
 import CreateIcon from "@mui/icons-material/Create";
 import DeleteIcon from "@mui/icons-material/Delete";
 import TablePagination from "@mui/material/TablePagination";
-import {toast} from 'react-toastify';
+import {toast, ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import CustomerService from "../../services/CustomerService";
 
 const defaultPosition = toast.POSITION.BOTTOM_CENTER;
 
@@ -255,6 +256,22 @@ const User = ({}) => {
         mobileNo: "",
     };
 
+    const updateCustomer = async (data) => {
+        setFormValues({
+            firstName: data.firstName,
+            lastName: data.lastName,
+            email:data.email,
+            username: data.username,
+            password:data.password,
+            city: data.city,
+            street:data.street,
+            streetNo: data.streetNo,
+            zipCode: data.zipCode,
+            latValue: data.latValue,
+            longValue: data.longValue,
+            mobileNo:data.mobileNo,
+        });
+    };
 
     const statusObj = {
         alert: false,
@@ -281,9 +298,50 @@ const User = ({}) => {
     const [tblData, setTblData] = useState([]);
 
     useEffect(() => {
-
+        loadData();
     }, [])
 
+    const loadData = async () => {
+        CustomerService.fetchUsers().then((res) => {
+            if (res.status === 200) {
+                setTblData(res.data.data)
+                setDataToRows(res.data.data)
+            }
+        });
+    };
+
+    const submitUpdateCustomer = async () => {
+        let dto = {};
+        dto = formValues;
+
+        if (btnLabel === "Update Details") {
+            let res = await CustomerService.putUser(formValues);//customer service --> putCustomer()
+
+            if (res.status === 201) {
+                setStatus({
+                    alert: true,
+                    message: "S",
+                    severity: 'success'
+                })
+                showToast('success', 'update successfully !');
+                clearFields();
+                loadData();
+            } else {
+                setStatus({
+                    alert: true,
+                    message: "E",
+                    severity: 'error'
+                });
+                showToast('error', 'Not Updated');
+            }
+        }
+    };
+
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+
+        await submitUpdateCustomer();
+    }
 
     const clearFields = () => {
 
@@ -375,6 +433,7 @@ const User = ({}) => {
     return (
 
         <div>
+            <ToastContainer/>
             <Grid item lg={12} xs={12} sm={12} md={12} sx={{mt:10}}>
                 <RubberBtn name="User Registration"/>
             </Grid>
@@ -382,6 +441,7 @@ const User = ({}) => {
 
             <Box
                 component="form"
+                onSubmit={handleSubmit}
                 sx={{
                     '& > :not(style)': {},
                 }}
@@ -398,7 +458,8 @@ const User = ({}) => {
                             id="outlined-basic"
                             label="First Name"
                             name="firstName"
-                            validators={['required']}
+                            onChange={handleInputChange}
+                            value={formValues.firstName}
                         />
                     </Grid>
                     <Grid item>
@@ -407,7 +468,8 @@ const User = ({}) => {
                             id="outlined-basic"
                             label="Last Name"
                             name="lastName"
-                            validators={['required']}
+                            onChange={handleInputChange}
+                            value={formValues.lastName}
                         />
                     </Grid>
                     <Grid item>
@@ -416,6 +478,8 @@ const User = ({}) => {
                             id="outlined-basic"
                             label="Email"
                             name="email"
+                            onChange={handleInputChange}
+                            value={formValues.email}
                         />
                     </Grid>
                     <Grid item>
@@ -424,6 +488,8 @@ const User = ({}) => {
                             id="outlined-basic"
                             label="UserName"
                             name="username"
+                            onChange={handleInputChange}
+                            value={formValues.username}
                         />
                     </Grid>
                     <Grid item>
@@ -432,6 +498,8 @@ const User = ({}) => {
                             id="outlined-basic"
                             label="Password"
                             name="password"
+                            onChange={handleInputChange}
+                            value={formValues.password}
                         />
                     </Grid>
                     <Grid item>
@@ -440,6 +508,8 @@ const User = ({}) => {
                             id="outlined-basic"
                             label="City"
                             name="city"
+                            onChange={handleInputChange}
+                            value={formValues.city}
                         />
                     </Grid>
                     <Grid item>
@@ -448,7 +518,8 @@ const User = ({}) => {
                             id="outlined-basic"
                             label="Street"
                             name="street"
-                            validators={['required']}
+                            onChange={handleInputChange}
+                            value={formValues.street}
                         />
                     </Grid>
                     <Grid item>
@@ -457,7 +528,8 @@ const User = ({}) => {
                             id="outlined-basic"
                             label="Street No"
                             name="streetNo"
-                            validators={['required']}
+                            onChange={handleInputChange}
+                            value={formValues.streetNo}
                         />
                     </Grid>
                     <Grid item>
@@ -466,6 +538,8 @@ const User = ({}) => {
                             id="outlined-basic"
                             label="Zip Code"
                             name="zipCode"
+                            onChange={handleInputChange}
+                            value={formValues.zipCode}
                         />
                     </Grid>
                     <Grid item>
@@ -474,6 +548,8 @@ const User = ({}) => {
                             id="outlined-basic"
                             label="Lat Value"
                             name="latValue"
+                            onChange={handleInputChange}
+                            value={formValues.latValue}
                         />
                     </Grid>
                     <Grid item>
@@ -482,6 +558,8 @@ const User = ({}) => {
                             id="outlined-basic"
                             label="Long Value"
                             name="longValue"
+                            onChange={handleInputChange}
+                            value={formValues.longValue}
                         />
                     </Grid>
                     <Grid item>
@@ -490,13 +568,18 @@ const User = ({}) => {
                             id="outlined-basic"
                             label="Mobile No"
                             name="mobileNo"
+                            onChange={handleInputChange}
+                            value={formValues.mobileNo}
                         />
                     </Grid>
 
                 </Grid>
                 <div>
                     <div>
-                        <Button color={btnColor} size="medium" type="submit" variant="contained" sx={{ml:5, mt: 5}}>
+                        <Button onClick={() => {
+                            updateCustomer();
+                        }}
+                                color={btnColor} size="medium" type="submit" variant="contained" sx={{ml:5, mt: 5}}>
                             {btnLabel}
                         </Button>
 
