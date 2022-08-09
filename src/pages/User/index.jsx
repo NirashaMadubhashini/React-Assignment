@@ -256,6 +256,12 @@ const User = ({}) => {
         mobileNo: "",
     };
 
+    const statusObj = {
+        alert: false,
+        message: '',
+        severity: '',
+    }
+
     const updateCustomer = async (data) => {
         setFormValues({
             firstName: data.firstName,
@@ -273,11 +279,6 @@ const User = ({}) => {
         });
     };
 
-    const statusObj = {
-        alert: false,
-        message: '',
-        severity: '',
-    }
 
     const handleInputChange = (e) => {
         const {name, value} = e.target;
