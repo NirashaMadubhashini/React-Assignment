@@ -26,6 +26,5 @@ class CartService{
         });
         return await promise;
     }
-
 }
 export default new CartService();
