@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "../axios";
 
 class ProductService {
     fetchProducts = async () => {
@@ -13,7 +13,6 @@ class ProductService {
         });
         return await promise;
     }
-
     fetchProductCategories = async () => {
         const promise = new Promise((resolve, reject) => {
             axios.get('products/categories')
@@ -26,20 +25,18 @@ class ProductService {
         });
         return await  promise;
     }
-
-    postProducts = async (data) => {
+    postProduct = async (data) => {
         const promise = new Promise((resolve, reject) => {
             axios.post('products', data)
                 .then((res) => {
                     return resolve(res);
                 })
-                .catch((err) => {
-                    return resolve(err)
+                .catch((res) => {
+                    return resolve(res);
                 })
         });
         return await promise;
     }
-
 }
 
-export default new ProductService()
+export default new ProductService();
