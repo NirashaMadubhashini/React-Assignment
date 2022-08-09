@@ -78,11 +78,11 @@ const SignUp = () => {
     const [tblData, setTblData] = useState([]);
 
 
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-
-        await submitUser();
-    }
+    // const handleSubmit = async (event) => {
+    //     event.preventDefault();
+    //
+    //     await submitUser();
+    // }
 
     const clearFields = () => {
 
@@ -112,7 +112,7 @@ const SignUp = () => {
         console.log(res.status)
 
         console.log("res Status", res)
-        if (res.data === 200) {
+        if (res.data.code === 200) {
 
             setStatus({
                 alert: true,
@@ -120,6 +120,7 @@ const SignUp = () => {
                 severity: 'success'
             })
             showToast('success', 'saved successfully !');
+
 
             clearFields();
 
@@ -146,7 +147,7 @@ const SignUp = () => {
                 <br/>
                 <Box
                     component="form"
-                    onSubmit={handleSubmit}
+                    // onSubmit={handleSubmit}
                     sx={{
                         '& > :not(style)': {},
                     }}
