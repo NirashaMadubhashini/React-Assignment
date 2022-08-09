@@ -67,7 +67,7 @@ class Dashboard extends Component {
         return (
             <Box sx={{flexGrow: 1}}>
                 <AppBar position="static">
-                    <Toolbar sx={{backgroundColor: "#1565BF"}}>
+                    <Toolbar sx={{backgroundColor: "#7B1FA2"}}>
                         <Typography variant="h5" component="div" sx={{flexGrow: 1, marginLeft: 10,fontFamily:'sans-serif'}}>
                             DashBoard
                         </Typography>
@@ -75,19 +75,22 @@ class Dashboard extends Component {
                               sx={{paddingLeft:45}}
                         >
                         <Link href="product" underline="none">
-                            <Button  type='submit' color='primary' variant="contained" size="small" sx={{ml:5}} fullWidth>Product</Button>
+                            <Button  type='submit' color='secondary' variant="contained" size="small" sx={{ml:5}} fullWidth>Product</Button>
                         </Link>
                         <Link href="signup" underline="none">
-                            <Button  type='submit' color='primary' variant="contained" size="small" sx={{ml:6}} fullWidth>User</Button>
+                            <Button  type='submit' color='secondary' variant="contained" size="small" sx={{ml:6}} fullWidth>User</Button>
                         </Link>
                         <Link href="cart" underline="none">
-                            <Button  type='submit' color='primary' variant="contained" size="small" sx={{ml:7}} fullWidth>Cart</Button>
+                            <Button  type='submit' color='secondary' variant="contained" size="small" sx={{ml:7}} fullWidth>Cart</Button>
                         </Link>
                         </Grid>
+
                         <Typography variant="h5" component="div" sx={{flexGrow: 1,fontFamily:'sans-serif', marginLeft: 50}}>
                            User
                         </Typography>
-
+                        <Link href="/" underline="none">
+                            <Button  type='submit' color='secondary' variant="contained" size="small" sx={{ml:2}} fullWidth>LogOut</Button>
+                        </Link>
 
                     </Toolbar>
                     {/*<Divider />*/}

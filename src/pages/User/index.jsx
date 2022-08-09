@@ -207,7 +207,7 @@ class User extends Component {
             <>
                 <Box sx={{flexGrow: 1}}>
                     <AppBar position="static">
-                        <Toolbar sx={{backgroundColor: "#1565BF"}}>
+                        <Toolbar sx={{backgroundColor: "#7B1FA2"}}>
                             <Typography variant="h5" component="div" sx={{flexGrow: 1, marginLeft: 10,fontFamily:'sans-serif'}}>
                                 DashBoard
                             </Typography>
@@ -215,16 +215,16 @@ class User extends Component {
                                   sx={{paddingLeft:42}}
                             >
                                 <Link href="dashboard" underline="none">
-                                    <Button  type='submit' color='primary' variant="contained" size="small" sx={{ml:3.5}} fullWidth>DashBoard</Button>
+                                    <Button  type='submit' color='secondary' variant="contained" size="small" sx={{ml:3.5}} fullWidth>DashBoard</Button>
                                 </Link>
                                 <Link href="product" underline="none">
-                                    <Button  type='submit' color='primary' variant="contained" size="small" sx={{ml:5}} fullWidth>Product</Button>
+                                    <Button  type='submit' color='secondary' variant="contained" size="small" sx={{ml:5}} fullWidth>Product</Button>
                                 </Link>
                                 <Link href="signup" underline="none">
-                                    <Button  type='submit' color='primary' variant="contained" size="small" sx={{ml:6}} fullWidth>User</Button>
+                                    <Button  type='submit' color='secondary' variant="contained" size="small" sx={{ml:6}} fullWidth>User</Button>
                                 </Link>
                                 <Link href="cart" underline="none">
-                                    <Button  type='submit' color='primary' variant="contained" size="small" sx={{ml:7}} fullWidth>Cart</Button>
+                                    <Button  type='submit' color='secondary' variant="contained" size="small" sx={{ml:7}} fullWidth>Cart</Button>
                                 </Link>
                             </Grid>
                             <Typography variant="h5" component="div" sx={{flexGrow: 1,fontFamily:'sans-serif', marginLeft: 50}}>
@@ -437,7 +437,7 @@ class User extends Component {
                     </Grid>
                     <Grid container marginTop={"10px"} direction={"row"} alignItems={"center"}
                           justifyContent={"flex-end"}>
-                        <Button variant={"contained"} color={"warning"}
+                        <Button variant={"contained"} color={"success"}
                                 style={{marginLeft: "10px", marginRight: "10px"}} onClick={this.clearFields}>Clear</Button>
                         <Button variant={"contained"} color={this.state.btnColor} type={"submit"}
                                 style={{marginLeft: "10px", marginRight: "10px"}}

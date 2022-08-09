@@ -162,7 +162,7 @@ class Cart extends Component {
             <>
                 <Box sx={{flexGrow: 1}}>
                     <AppBar position="static">
-                        <Toolbar sx={{backgroundColor: "#1565BF"}}>
+                        <Toolbar sx={{backgroundColor: "#7B1FA2"}}>
                             <Typography variant="h5" component="div" sx={{flexGrow: 1, marginLeft: 10,fontFamily:'sans-serif'}}>
                                 DashBoard
                             </Typography>
@@ -170,16 +170,16 @@ class Cart extends Component {
                                   sx={{paddingLeft:45}}
                             >
                                 <Link href="dashboard" underline="none">
-                                    <Button  type='submit' color='primary' variant="contained" size="small" sx={{ml:3.5}} fullWidth>DashBoard</Button>
+                                    <Button  type='submit' color='secondary' variant="contained" size="small" sx={{ml:3.5}} fullWidth>DashBoard</Button>
                                 </Link>
                                 <Link href="product" underline="none">
-                                    <Button  type='submit' color='primary' variant="contained" size="small" sx={{ml:5}} fullWidth>Product</Button>
+                                    <Button  type='submit' color='secondary' variant="contained" size="small" sx={{ml:5}} fullWidth>Product</Button>
                                 </Link>
                                 <Link href="signup" underline="none">
-                                    <Button  type='submit' color='primary' variant="contained" size="small" sx={{ml:6}} fullWidth>User</Button>
+                                    <Button  type='submit' color='secondary' variant="contained" size="small" sx={{ml:6}} fullWidth>User</Button>
                                 </Link>
                                 <Link href="cart" underline="none">
-                                    <Button  type='submit' color='primary' variant="contained" size="small" sx={{ml:7}} fullWidth>Cart</Button>
+                                    <Button  type='submit' color='secondary' variant="contained" size="small" sx={{ml:7}} fullWidth>Cart</Button>
                                 </Link>
                             </Grid>
                             <Typography variant="h5" component="div" sx={{flexGrow: 1,fontFamily:'sans-serif', marginLeft: 50}}>
@@ -282,9 +282,9 @@ class Cart extends Component {
                         </Grid>
                         <Grid item lg={3} md={3} xs={6} sm={6} display={"flex"} flexDirection={"row"}
                               alignItems={"center"} justifyContent={"flex-start"}>
-                            <Button variant={"contained"} color={"success"} type={"submit"}
+                            <Button variant={"contained"} color={"primary"} type={"submit"}
                                     style={{marginLeft: "10px", marginRight: "10px"}}>Add</Button>
-                            <Button variant={"contained"} color={"warning"}
+                            <Button variant={"contained"} color={"success"}
                                     style={{marginLeft: "10px", marginRight: "10px"}}>Clear</Button>
                         </Grid>
                     </Grid>
@@ -307,9 +307,9 @@ class Cart extends Component {
                 </Grid>
                 <Grid container marginTop={"10px"} direction={"row"} alignItems={"center"}
                       justifyContent={"flex-end"}>
-                    <Button variant={"contained"} color={"warning"}
+                    <Button variant={"contained"} color={"error"}
                             style={{marginLeft: "10px", marginRight: "10px"}}>Clear</Button>
-                    <Button variant={"contained"} color={"primary"} type={"submit"}
+                    <Button variant={"contained"} color={"secondary"} type={"submit"}
                             style={{marginLeft: "10px", marginRight: "10px"}} onClick={this.saveCart}>Save</Button>
                 </Grid>
                     <GDSESnackBar
