@@ -2,17 +2,16 @@ import axios from "axios";
 
 class LoginService {
     loginUser = async (data) => {
-
-        const promise = new Promise((resolve, reject) => {
-            axios.post('login', data)
+        const promise = await new Promise((resolve, reject) => {
+            axios.post('auth/login', data)
                 .then((res) => {
-                    return resolve(res)
+                    return resolve(res);
                 })
-                .catch((er) => {
-                    return resolve(er)
+                .catch((err) => {
+                    return resolve(err);
                 })
-        })
-        return await promise
+        });
+        return await promise;
     }
 }
 
