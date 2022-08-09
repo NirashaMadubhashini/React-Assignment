@@ -20,11 +20,10 @@ import ListItemText from '@mui/material/ListItemText';
 import CategoryIcon from '@mui/icons-material/Category';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import PersonIcon from '@mui/icons-material/Person';
-import Product from "../Product";
-import Cart from "../cart";
+import Cart from "../Cart";
 import User from "../User";
-import MainDash from "../DashBoard";
-
+import Dashboard from "../Dashboard";
+import Products from "../Products";
 
 const drawerWidth = 240;
 
@@ -185,10 +184,11 @@ export default function DashBoard() {
             </Box>
             {
                 isUser ? <User/> :
-                    isProduct ? <Product/> :
+                    isProduct ? <Products/> :
                         isCart ? <Cart/> :
-                            <MainDash/>
+                            <Dashboard/>
             }
         </Typography>
     );
 }
+export default Main

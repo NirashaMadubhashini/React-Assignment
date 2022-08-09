@@ -3,8 +3,8 @@ import TextField from "@mui/material/TextField";
 import {Avatar, Box, Button, Grid, Link, Paper, Typography} from "@mui/material";
 import LockOpenIcon from '@mui/icons-material/LockOpen';
 import {toast, ToastContainer} from 'react-toastify';
-import CustomerService from "../../services/CustomerService";
-import {showToast} from "../User";
+import CustomerService from "../../services/UserService";
+
 
 const SignUp = () => {
     const paperStyleContainer = {
@@ -119,7 +119,6 @@ const SignUp = () => {
                 message: "S",
                 severity: 'success'
             })
-            showToast('success', 'saved successfully !');
 
 
             clearFields();
@@ -131,7 +130,6 @@ const SignUp = () => {
                 severity: 'error'
             });
             console.log("not Equal")
-            showToast('error', 'Not Saved');
         }
     };
 

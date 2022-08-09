@@ -1,748 +1,531 @@
-import React, {useEffect, useState} from 'react'
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Divider from "@mui/material/Divider";
-import {Grid, IconButton} from "@mui/material";
-import TextField from "@mui/material/TextField";
-import InputBase from "@mui/material/InputBase";
-import SearchIcon from "@mui/icons-material/Search";
+import React, {Component} from "react";
+import {TextValidator, ValidatorForm} from "react-material-ui-form-validator";
+import {
+    Button,
+    Grid,
+    Paper,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    Typography
+} from "@mui/material";
+import GDSESnackBar from "../../component/SnackBar";
+import UserService from "../../services/UserService";
+import IconButton from '@mui/material/IconButton';
+import Tooltip from '@mui/material/Tooltip';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 import RubberBtn from "../../component/common/RubberBandBtn";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import TableCell from "@mui/material/TableCell";
-import TableSortLabel from "@mui/material/TableSortLabel";
-import {visuallyHidden} from "@mui/utils";
-import PropTypes from "prop-types";
-import Paper from "@mui/material/Paper";
-import TableContainer from "@mui/material/TableContainer";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import CreateIcon from "@mui/icons-material/Create";
-import DeleteIcon from "@mui/icons-material/Delete";
-import TablePagination from "@mui/material/TablePagination";
-import {toast, ToastContainer} from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import CustomerService from "../../services/CustomerService";
-
-const defaultPosition = toast.POSITION.BOTTOM_CENTER;
+import Divider from "@mui/material/Divider";
+import AppBar from "@mui/material/AppBar";
+import Toolbar from "@mui/material/Toolbar";
+import Link from "@mui/material/Link";
+import Box from "@mui/material/Box";
 
 
-function createData(firstName, lastName, email, username, password, city, street, streetNo, zipCode, latValue, longValue, mobileNo, update, deleted) {
-    return {
-        firstName,
-        lastName,
-        email,
-        username,
-        password,
-        city,
-        street,
-        streetNo,
-        zipCode,
-        latValue,
-        longValue,
-        mobileNo,
-        update,
-        deleted
-
-    };
-}
-
-function descendingComparator(a, b, orderBy) {
-    if (b[orderBy] < a[orderBy]) {
-        return -1;
-    }
-    if (b[orderBy] > a[orderBy]) {
-        return 1;
-    }
-    return 0;
-}
-
-function getComparator(order, orderBy) {
-    return order === 'desc'
-        ? (a, b) => descendingComparator(a, b, orderBy)
-        : (a, b) => -descendingComparator(a, b, orderBy);
-}
-
-
-function stableSort(array, comparator) {
-    const stabilizedThis = array.map((el, index) => [el, index]);
-    stabilizedThis.sort((a, b) => {
-        const order = comparator(a[0], b[0]);
-        if (order !== 0) {
-            return order;
+class User extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            formData: {
+                email: '',
+                username: '',
+                password: '',
+                name: {
+                    firstname: '',
+                    lastname: ''
+                },
+                address: {
+                    city: '',
+                    street: '',
+                    number: '',
+                    zipcode: '',
+                    geolocation: {
+                        lat: '',
+                        long: ''
+                    }
+                },
+                phone: ''
+            },
+            id: '',
+            alert: false,
+            message: '',
+            severity: '',
+            btnLabel: 'Save',
+            btnColor: 'primary',
+            data:[]
         }
-        return a[1] - b[1];
-    });
-    return stabilizedThis.map((el) => el[0]);
-}
-
-
-const headCells = [
-
-    {
-        id: 'firstName',
-        numeric: false,
-        disablePadding: true,
-        label: 'First Name',
-    },
-    {
-        id: 'lastName',
-        numeric: false,
-        disablePadding: true,
-        label: 'Last Name',
-    },
-    {
-        id: 'email',
-        numeric: false,
-        disablePadding: true,
-        label: 'Email',
-    },
-    {
-        id: 'username',
-        numeric: false,
-        disablePadding: true,
-        label: 'UserName',
-    },
-    {
-        id: 'password',
-        numeric: false,
-        disablePadding: true,
-        label: 'Password',
-    },
-    {
-        id: 'city',
-        numeric: false,
-        disablePadding: true,
-        label: 'City',
-    },
-    {
-        id: 'street',
-        numeric: false,
-        disablePadding: true,
-        label: 'Street',
-    },
-    {
-        id: 'streetNo',
-        numeric: false,
-        disablePadding: true,
-        label: 'Street No',
-    },
-    {
-        id: 'zipCode',
-        numeric: false,
-        disablePadding: true,
-        label: 'Zip Code',
-    },
-    {
-        id: 'latValue',
-        numeric: false,
-        disablePadding: true,
-        label: 'Lat Value',
-    },
-    {
-        id: 'longValue',
-        numeric: false,
-        disablePadding: true,
-        label: 'Long Value',
-    },
-    {
-        id: 'mobileNo',
-        numeric: false,
-        disablePadding: true,
-        label: 'Mobile No',
-    },
-    {
-        id: 'update',
-        numeric: false,
-        disablePadding: true,
-        label: 'Update',
-    },
-    {
-        id: 'deleted',
-        numeric: false,
-        disablePadding: true,
-        label: 'Delete',
-    },
-];
-
-function EnhancedTableHead(props) {
-    const {onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort} =
-        props;
-    const createSortHandler = (property) => (event) => {
-        onRequestSort(event, property);
-    };
-    return (
-        <TableHead>
-            <TableRow>
-                <TableCell padding="checkbox">
-
-                </TableCell>
-                {headCells.map((headCell) => (
-                    <TableCell
-                        key={headCell.id}
-                        align={headCell.numeric ? 'right' : 'left'}
-                        padding={headCell.disablePadding ? 'none' : 'normal'}
-                        sortDirection={orderBy === headCell.id ? order : false}
-                    >
-                        <TableSortLabel
-                            active={orderBy === headCell.id}
-                            direction={orderBy === headCell.id ? order : 'asc'}
-                            onClick={createSortHandler(headCell.id)}
-                        >
-                            {headCell.label}
-                            {orderBy === headCell.id ? (
-                                <Box component="span" sx={visuallyHidden}>
-                                    {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                                </Box>
-                            ) : null}
-                        </TableSortLabel>
-                    </TableCell>
-                ))}
-            </TableRow>
-        </TableHead>
-    );
-}
-
-
-EnhancedTableHead.propTypes = {
-    numSelected: PropTypes.number.isRequired,
-    onRequestSort: PropTypes.func.isRequired,
-    onSelectAllClick: PropTypes.func.isRequired,
-    order: PropTypes.oneOf(['asc', 'desc']).isRequired,
-    orderBy: PropTypes.string.isRequired,
-    rowCount: PropTypes.number.isRequired,
-};
-
-const EnhancedTableToolbar = (props) => {
-    const {numSelected} = props;
-
-};
-
-EnhancedTableToolbar.propTypes = {
-    numSelected: PropTypes.number.isRequired,
-};
-
-export const showToast = (type = "success", msg, autoClose = 2000, className = "primaryColor", position = defaultPosition) => {
-    if (type === "success") {
-        toast.success(msg, {
-            autoClose: autoClose === null ? 2000 : autoClose,
-            className: className === null ? "primaryColor" : className,
-            position: position,
-        });
-    } else if (type === "error") {
-        toast.error(msg, {
-            autoClose: autoClose === null ? 2000 : autoClose,
-            className: className === null ? "dangerColor" : className,
-            position: position,
-        });
-    }
-};
-
-
-const User = ({}) => {
-
-    const initialValues = {
-        firstName: "",
-        lastName: "",
-        email: "",
-        username: "",
-        password: "",
-        city: "",
-        street: "",
-        streetNo: "",
-        zipCode: "",
-        latValue: "",
-        longValue: "",
-        mobileNo: "",
-    };
-
-    const statusObj = {
-        alert: false,
-        message: '',
-        severity: '',
     }
 
-    const updateCustomer = async (data) => {
-        setFormValues({
-            firstName: data.firstName,
-            lastName: data.lastName,
-            email:data.email,
-            username: data.username,
-            password:data.password,
-            city: data.city,
-            street:data.street,
-            streetNo: data.streetNo,
-            zipCode: data.zipCode,
-            latValue: data.latValue,
-            longValue: data.longValue,
-            mobileNo:data.mobileNo,
-        });
-    };
+    saveUser = async () => {
+        let formData = this.state.formData;
 
+        if (this.state.btnLabel === "Save") {
+            let res = await UserService.postUser(formData);
 
-    const handleInputChange = (e) => {
-        const {name, value} = e.target;
-        setFormValues({
-            ...formValues,
-            [name]: value,
-        });
-    };
+            console.log(res);
 
-    const [formValues, setFormValues] = useState(initialValues);
-
-    const [status, setStatus] = useState(statusObj);
-
-    const [btnLabel, setBtnLabel] = useState('Update');
-
-    const [btnColor, setBtnColor] = useState('primary');
-
-    const [tblData, setTblData] = useState([]);
-
-    useEffect(() => {
-        loadData();
-    }, [])
-
-    const loadData = async () => {
-        CustomerService.fetchUsers().then((res) => {
             if (res.status === 200) {
-                setTblData(res.data.data)
-                setDataToRows(res.data.data)
-            }
-        });
-    };
-
-    const submitUpdateCustomer = async () => {
-        let dto = {};
-        dto = formValues;
-
-        if (btnLabel === "Update Details") {
-            let res = await CustomerService.putUser(formValues);//customer service --> putCustomer()
-
-            if (res.status === 201) {
-                setStatus({
+                this.setState({
                     alert: true,
-                    message: "S",
+                    message: 'User saved successfully',
                     severity: 'success'
-                })
-                showToast('success', 'update successfully !');
-                clearFields();
-                loadData();
+                });
+                this.clearFields();
+                await this.loadUsers();
             } else {
-                setStatus({
+                this.setState({
                     alert: true,
-                    message: "E",
+                    message: "User not saved",
                     severity: 'error'
                 });
-                showToast('error', 'Not Updated');
+            }
+        } else {
+            let id = this.state.id;
+            let res = await UserService.putUser(formData,id);
+
+            if (res.status===200){
+                this.setState({
+                    alert:true,
+                    message:'User updated successfully',
+                    severity:'success',
+                    btnLabel:'Save',
+                    btnColor:'primary'
+                });
+                this.clearFields();
+                await this.loadUsers();
+            } else {
+                this.setState({
+                    alert:true,
+                    message:"User Not Updated",
+                    severity:'error'
+                });
             }
         }
     };
 
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-
-        await submitUpdateCustomer();
+    loadUsers = async () => {
+        let res = await UserService.fetchUsers();
+        console.log(res.data);
+        if (res.status===200){
+            this.setState({
+                data:res.data
+            });
+        }
+        this.exampleForMap();
     }
 
-    const clearFields = () => {
-
-        setFormValues({
-            firstName: "",
-            lastName: "",
-            email: "",
-            username: "",
-            password: "",
-            city: "",
-            street: "",
-            streetNo: "",
-            zipCode: "",
-            latValue: "",
-            longValue: "",
-            mobileNo: "",
-
-        });
+    exampleForMap = () => {
+        this.state.data.map((value, index) => {
+            console.log(value)   // access element one by one
+        })
     };
 
+    componentDidMount() {
+        this.loadUsers();
+    }
 
-    const [order, setOrder] = React.useState('asc');
-    const [orderBy, setOrderBy] = React.useState('calories');
-    const [selected, setSelected] = React.useState([]);
-    const [page, setPage] = React.useState(0);
-    const [dense, setDense] = React.useState(false);
-    const [rowsPerPage, setRowsPerPage] = React.useState(5);
-    const [rows, setRows] = useState([]);
+    updateUser = (data) => {
+        this.setState({
+            btnLabel:'Update',
+            btnColor:'secondary',
+            formData:{
+                email: data.email,
+                username: data.username,
+                password: data.password,
+                name: {
+                    firstname: data.name.firstname,
+                    lastname: data.name.lastname
+                },
+                address: {
+                    city: data.address.city,
+                    street: data.address.street,
+                    number: data.address.number,
+                    zipcode: data.address.zipcode,
+                    geolocation: {
+                        lat: data.address.geolocation.lat,
+                        long: data.address.geolocation.long
+                    }
+                },
+                phone: data.phone
+            },
+            id:data.id
+        })
+    }
 
-    const setDataToRows = (td) => {
-
-        console.log("tablemap", td);
-        const newArr2 = []
-        for (let i = 0; i < td.length; i++) {
-            newArr2.push((createData(
-                td[i].firstName, td[i].lastName, td[i].email, td[i].username,
-                td[i].password, td[i].city, td[i].street,
-                td[i].streetNo,
-                td[i].zipCode,
-                td[i].latValue,
-                td[i].longValue,
-                td[i].mobileNo
-            )))
+    deleteUser = async (id) => {
+        let res = await UserService.deleteUser(id);
+        console.log(res);
+        if(res.status === 200) {
+            this.setState({
+                alert: true,
+                message: 'User deleted successfully',
+                severity: 'success'
+            });
+            await this.loadUsers();
+        } else {
+            this.setState({
+                alert: true,
+                message: 'User not deleted',
+                severity: 'error'
+            });
         }
-        console.log("new Arra", newArr2)
-        setRows(newArr2)
-        // td.map((data) => (
-        //     setRows(createData(
-        //         data.registrationNO, data.brand, data.type, data.noOfPassengers, data.transmissionType, data.fuelType, data.color, data.frontViewImg,
-        //         data.backViewImg, data.sideViewImg, data.internalViewImg, data.dailyRate, data.monthlyRate, data.freeKmForPrice, data.freeKmForDuration,
-        //         data.lossDamageWaiver, data.priceForExtraKm, data.completeKm,"update","deleted","maintain"
-        //     ))
-        // ))
+    }
+    clearFields = () => {
+        this.setState({
+            formData: {
+                email: '',
+                username: '',
+                password: '',
+                name: {
+                    firstname: '',
+                    lastname: ''
+                },
+                address: {
+                    city: '',
+                    street: '',
+                    number: '',
+                    zipcode: '',
+                    geolocation: {
+                        lat: '',
+                        long: ''
+                    }
+                },
+                phone: ''
+            },
+            id: '',
+            btnLabel: 'Save',
+            btnColor: 'primary'
+        })
+    }
 
-    };
+    render() {
+        return (
+            <>
+                <Box sx={{flexGrow: 1}}>
+                    <AppBar position="static">
+                        <Toolbar sx={{backgroundColor: "#1565BF"}}>
+                            <Typography variant="h5" component="div" sx={{flexGrow: 1, marginLeft: 10,fontFamily:'sans-serif'}}>
+                                DashBoard
+                            </Typography>
+                            <Grid container alignItems="center" justify="center" direction="row" spacing={2}
+                                  sx={{paddingLeft:42}}
+                            >
+                                <Link href="dashboard" underline="none">
+                                    <Button  type='submit' color='primary' variant="contained" size="small" sx={{ml:3.5}} fullWidth>DashBoard</Button>
+                                </Link>
+                                <Link href="product" underline="none">
+                                    <Button  type='submit' color='primary' variant="contained" size="small" sx={{ml:5}} fullWidth>Product</Button>
+                                </Link>
+                                <Link href="signup" underline="none">
+                                    <Button  type='submit' color='primary' variant="contained" size="small" sx={{ml:6}} fullWidth>User</Button>
+                                </Link>
+                                <Link href="cart" underline="none">
+                                    <Button  type='submit' color='primary' variant="contained" size="small" sx={{ml:7}} fullWidth>Cart</Button>
+                                </Link>
+                            </Grid>
+                            <Typography variant="h5" component="div" sx={{flexGrow: 1,fontFamily:'sans-serif', marginLeft: 50}}>
+                                User
+                            </Typography>
 
 
-    const handleRequestSort = (event, property) => {
-        const isAsc = orderBy === property && order === 'asc';
-        setOrder(isAsc ? 'desc' : 'asc');
-        setOrderBy(property);
-    };
-
-    const handleSelectAllClick = (event) => {
-        if (event.target.checked) {
-            const newSelecteds = rows.map((n) => n.name);
-            setSelected(newSelecteds);
-            return;
-        }
-        setSelected([]);
-    };
-
-    const handleChangePage = (event, newPage) => {
-        setPage(newPage);
-    };
-
-    const handleChangeRowsPerPage = (event) => {
-        setRowsPerPage(parseInt(event.target.value, 10));
-        setPage(0);
-    };
-
-
-    const isSelected = (name) => selected.indexOf(name) !== -1;
-
-
-    const emptyRows =
-        page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
-
-    return (
-
-        <div>
-            <ToastContainer/>
-            <Grid item lg={12} xs={12} sm={12} md={12} sx={{mt:10}}>
-                <RubberBtn name="User Registration"/>
-            </Grid>
-            <Divider/>
-
-            <Box
-                component="form"
-                onSubmit={handleSubmit}
-                sx={{
-                    '& > :not(style)': {},
-                }}
-                noValidate
-                autoComplete="off"
-            >
-
-                <Grid container alignItems="center" justify="center" direction="row" spacing={2}
-                      sx={{paddingLeft: 5, mt: 5}}
-                >
-                    <Grid item>
-                        <TextField
-                            helperText="Enter First Name"
-                            id="outlined-basic"
-                            label="First Name"
-                            name="firstName"
-                            onChange={handleInputChange}
-                            value={formValues.firstName}
-                        />
-                    </Grid>
-                    <Grid item>
-                        <TextField
-                            helperText="Enter Last Name"
-                            id="outlined-basic"
-                            label="Last Name"
-                            name="lastName"
-                            onChange={handleInputChange}
-                            value={formValues.lastName}
-                        />
-                    </Grid>
-                    <Grid item>
-                        <TextField
-                            helperText="Enter Email"
-                            id="outlined-basic"
-                            label="Email"
-                            name="email"
-                            onChange={handleInputChange}
-                            value={formValues.email}
-                        />
-                    </Grid>
-                    <Grid item>
-                        <TextField
-                            helperText="Enter UserName"
-                            id="outlined-basic"
-                            label="UserName"
-                            name="username"
-                            onChange={handleInputChange}
-                            value={formValues.username}
-                        />
-                    </Grid>
-                    <Grid item>
-                        <TextField
-                            helperText="Enter Password"
-                            id="outlined-basic"
-                            label="Password"
-                            name="password"
-                            onChange={handleInputChange}
-                            value={formValues.password}
-                        />
-                    </Grid>
-                    <Grid item>
-                        <TextField
-                            helperText="Enter City"
-                            id="outlined-basic"
-                            label="City"
-                            name="city"
-                            onChange={handleInputChange}
-                            value={formValues.city}
-                        />
-                    </Grid>
-                    <Grid item>
-                        <TextField
-                            helperText="Enter Street"
-                            id="outlined-basic"
-                            label="Street"
-                            name="street"
-                            onChange={handleInputChange}
-                            value={formValues.street}
-                        />
-                    </Grid>
-                    <Grid item>
-                        <TextField
-                            helperText="Enter Street No"
-                            id="outlined-basic"
-                            label="Street No"
-                            name="streetNo"
-                            onChange={handleInputChange}
-                            value={formValues.streetNo}
-                        />
-                    </Grid>
-                    <Grid item>
-                        <TextField
-                            helperText="Enter Zip Code"
-                            id="outlined-basic"
-                            label="Zip Code"
-                            name="zipCode"
-                            onChange={handleInputChange}
-                            value={formValues.zipCode}
-                        />
-                    </Grid>
-                    <Grid item>
-                        <TextField
-                            helperText="Enter Lat Value"
-                            id="outlined-basic"
-                            label="Lat Value"
-                            name="latValue"
-                            onChange={handleInputChange}
-                            value={formValues.latValue}
-                        />
-                    </Grid>
-                    <Grid item>
-                        <TextField
-                            helperText="Enter Long Value"
-                            id="outlined-basic"
-                            label="Long Value"
-                            name="longValue"
-                            onChange={handleInputChange}
-                            value={formValues.longValue}
-                        />
-                    </Grid>
-                    <Grid item>
-                        <TextField
-                            helperText="Enter Mobile No"
-                            id="outlined-basic"
-                            label="Mobile No"
-                            name="mobileNo"
-                            onChange={handleInputChange}
-                            value={formValues.mobileNo}
-                        />
-                    </Grid>
-
-                </Grid>
-                <div>
-                    <div>
-                        <Button onClick={() => {
-                            updateCustomer();
-                        }}
-                                color={btnColor} size="medium" type="submit" variant="contained" sx={{ml:5, mt: 5}}>
-                            {btnLabel}
-                        </Button>
-
-                        <Button onClick={clearFields} type="reset" variant="contained" color="success" sx={{ml:2, mt: 5}}>
-                           Clear
-                        </Button>
-                    </div>
-
-                    <Box sx={{width: '100%'}}>
-                        <Paper sx={{width: '100%', mb: 2}}>
-                            <EnhancedTableToolbar numSelected={selected.length}/>
-                            <TableContainer>
-                                <Table
-                                    sx={{minWidth: 750, marginTop: 5}}
-                                    aria-labelledby="tableTitle"
-                                    size={dense ? 'small' : 'medium'}
-                                >
-                                    <EnhancedTableHead
-                                        numSelected={selected.length}
-                                        order={order}
-                                        orderBy={orderBy}
-                                        onSelectAllClick={handleSelectAllClick}
-                                        onRequestSort={handleRequestSort}
-                                        rowCount={rows.length}
-                                    />
-                                    <TableBody>
-                                        {stableSort(rows, getComparator(order, orderBy))
-                                            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                            .map((row, index) => {
-                                                const isItemSelected = isSelected(row.firstName);
-                                                const labelId = `enhanced-table-checkbox-${index}`;
-
-                                                return (
-                                                    <TableRow
-                                                        hover
-                                                        aria-checked={isItemSelected}
-                                                        tabIndex={-1}
-                                                        key={row.firstName}
-                                                        selected={isItemSelected}
-                                                    >
-                                                        <TableCell>
-                                                        </TableCell>
-                                                        <TableCell
-                                                            component="th"
-                                                            id={labelId}
-                                                            scope="row"
-                                                            padding="none"
-                                                        >
-                                                            {row.firstName}
-                                                        </TableCell>
-                                                        <TableCell
-                                                            component="th"
-                                                            id={labelId}
-                                                            scope="row"
-                                                            padding="none"
-                                                        >
-                                                            {row.lastName}
-                                                        </TableCell>
-                                                        <TableCell component="th"
-                                                                   id={labelId}
-                                                                   scope="row"
-                                                                   padding="none">{row.email}
-                                                        </TableCell>
-                                                        <TableCell component="th"
-                                                                   id={labelId}
-                                                                   scope="row"
-                                                                   padding="none">{row.username}
-                                                        </TableCell>
-                                                        <TableCell component="th"
-                                                                   id={labelId}
-                                                                   scope="row"
-                                                                   padding="none">{row.password}
-                                                        </TableCell>
-                                                        <TableCell component="th"
-                                                                   id={labelId}
-                                                                   scope="row"
-                                                                   padding="none">{row.city}
-                                                        </TableCell>
-                                                        <TableCell component="th"
-                                                                   id={labelId}
-                                                                   scope="row"
-                                                                   padding="none">{row.street}
-                                                        </TableCell>
-                                                        <TableCell component="th"
-                                                                   id={labelId}
-                                                                   scope="row"
-                                                                   padding="none">{row.streetNo}
-                                                        </TableCell>
-                                                        <TableCell component="th"
-                                                                   id={labelId}
-                                                                   scope="row"
-                                                                   padding="none">{row.zipCode}
-                                                        </TableCell>
-                                                        <TableCell component="th"
-                                                                   id={labelId}
-                                                                   scope="row"
-                                                                   padding="none">{row.latValue}
-                                                        </TableCell>
-                                                        <TableCell component="th"
-                                                                   id={labelId}
-                                                                   scope="row"
-                                                                   padding="none">{row.longValue}
-                                                        </TableCell>
-                                                        <TableCell component="th"
-                                                                   id={labelId}
-                                                                   scope="row"
-                                                                   padding="none">{row.mobileNo}
-                                                        </TableCell>
-
-                                                        <TableCell component="th"
-                                                                   id={labelId}
-                                                                   scope="row"
-                                                                   padding="none">{row.update}
-                                                            <IconButton color="info" aria-label="update" component="label">
-                                                                <CreateIcon/>
-                                                            </IconButton>
-
-                                                        </TableCell>
-                                                        <TableCell component="th"
-                                                                   id={labelId}
-                                                                   scope="row"
-                                                                   padding="none">{row.delete}
-
-                                                            <IconButton
-                                                                        color="error" aria-label="delete"
-                                                                        component="label">
-                                                                <DeleteIcon/>
-                                                            </IconButton>
-                                                        </TableCell>
-
-                                                    </TableRow>
-                                                );
-                                            })}
-                                        {emptyRows > 0 && (
-                                            <TableRow
-                                                style={{
-                                                    height: (dense ? 33 : 53) * emptyRows,
-                                                }}
-                                            >
-                                                <TableCell colSpan={6}/>
-                                            </TableRow>
-                                        )}
-                                    </TableBody>
-                                </Table>
-                            </TableContainer>
-                            <TablePagination
-                                rowsPerPageOptions={[5, 10, 25]}
-                                component="div"
-                                count={rows.length}
-                                rowsPerPage={rowsPerPage}
-                                page={page}
-                                onPageChange={handleChangePage}
-                                onRowsPerPageChange={handleChangeRowsPerPage}
+                        </Toolbar>
+                        {/*<Divider />*/}
+                    </AppBar>
+                <ValidatorForm ref="form" className="pt-2" onSubmit={this.saveUser}>
+                    <Grid container className="pt-2" spacing={3}>
+                        <Grid item lg={12} xs={12} sm={12} md={12} sx={{mt:10}}>
+                            <RubberBtn name="User Registration"/>
+                        </Grid>
+                        <Divider/>
+                        <Grid item xs={12} sm={12} md={6} lg={6}>
+                            <Typography variant="subtitle1">First Name</Typography>
+                            <TextValidator
+                                placeholder="First Name"
+                                variant="outlined"
+                                size="small"
+                                style={{width: '100%'}}
+                                value={this.state.formData.name.firstname}
+                                onChange={(e) => {
+                                    let formData = this.state.formData;
+                                    formData.name.firstname = e.target.value;
+                                    this.setState({formData})
+                                }}
+                                validators={['required']}
                             />
-                        </Paper>
-                    </Box>
+                        </Grid>
+                        <Grid item xs={12} sm={12} md={6} lg={6}>
+                            <Typography variant="subtitle1">Last Name</Typography>
+                            <TextValidator
+                                placeholder="Last Name"
+                                variant="outlined"
+                                size="small"
+                                style={{width: '100%'}}
+                                value={this.state.formData.name.lastname}
+                                onChange={(e) => {
+                                    let formData = this.state.formData;
+                                    formData.name.lastname = e.target.value;
+                                    this.setState({formData})
+                                }}
+                                validators={['required']}
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={12} md={6} lg={6}>
+                            <Typography variant="subtitle1">Email</Typography>
+                            <TextValidator
+                                placeholder="Email"
+                                variant="outlined"
+                                size="small"
+                                style={{width: '100%'}}
+                                value={this.state.formData.email}
+                                onChange={(e) => {
+                                    let formData = this.state.formData;
+                                    formData.email = e.target.value;
+                                    this.setState({formData})
+                                }}
+                                validators={['required']}
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={12} md={6} lg={6}>
+                            <Typography variant="subtitle1">Username</Typography>
+                            <TextValidator
+                                placeholder="Username"
+                                variant="outlined"
+                                size="small"
+                                style={{width: '100%'}}
+                                value={this.state.formData.username}
+                                onChange={(e) => {
+                                    let formData = this.state.formData;
+                                    formData.username = e.target.value;
+                                    this.setState({formData})
+                                }}
+                                validators={['required']}
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={12} md={6} lg={6}>
+                            <Typography variant="subtitle1">Password</Typography>
+                            <TextValidator
+                                type="password"
+                                placeholder="Password"
+                                variant="outlined"
+                                size="small"
+                                style={{width: '100%'}}
+                                value={this.state.formData.password}
+                                onChange={(e) => {
+                                    let formData = this.state.formData;
+                                    formData.password = e.target.value;
+                                    this.setState({formData})
+                                }}
+                                validators={['required']}
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={12} md={6} lg={6}>
+                            <Typography variant="subtitle1">City</Typography>
+                            <TextValidator
+                                placeholder="City"
+                                variant="outlined"
+                                size="small"
+                                style={{width: '100%'}}
+                                value={this.state.formData.address.city}
+                                onChange={(e) => {
+                                    let formData = this.state.formData;
+                                    formData.address.city = e.target.value;
+                                    this.setState({formData})
+                                }}
+                                validators={['required']}
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={12} md={6} lg={6}>
+                            <Typography variant="subtitle1">Street</Typography>
+                            <TextValidator
+                                placeholder="Street"
+                                variant="outlined"
+                                size="small"
+                                style={{width: '100%'}}
+                                value={this.state.formData.address.street}
+                                onChange={(e) => {
+                                    let formData = this.state.formData;
+                                    formData.address.street = e.target.value;
+                                    this.setState({formData})
+                                }}
+                                validators={['required']}
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={12} md={6} lg={6}>
+                            <Typography variant="subtitle1">Street No</Typography>
+                            <TextValidator
+                                placeholder="Street No"
+                                variant="outlined"
+                                size="small"
+                                style={{width: '100%'}}
+                                value={this.state.formData.address.number}
+                                onChange={(e) => {
+                                    let formData = this.state.formData;
+                                    formData.address.number = e.target.value;
+                                    this.setState({formData})
+                                }}
+                                validators={['required']}
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={12} md={6} lg={6}>
+                            <Typography variant="subtitle1">Zip Code</Typography>
+                            <TextValidator
+                                placeholder="Zip Code"
+                                variant="outlined"
+                                size="small"
+                                style={{width: '100%'}}
+                                value={this.state.formData.address.zipcode}
+                                onChange={(e) => {
+                                    let formData = this.state.formData;
+                                    formData.address.zipcode = e.target.value;
+                                    this.setState({formData})
+                                }}
+                                validators={['required']}
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={12} md={6} lg={6}>
+                            <Typography variant="subtitle1">Lat Value</Typography>
+                            <TextValidator
+                                placeholder="Lat Value"
+                                variant="outlined"
+                                size="small"
+                                style={{width: '100%'}}
+                                value={this.state.formData.address.geolocation.lat}
+                                onChange={(e) => {
+                                    let formData = this.state.formData;
+                                    formData.address.geolocation.lat = e.target.value;
+                                    this.setState({formData})
+                                }}
+                                validators={['required']}
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={12} md={6} lg={6}>
+                            <Typography variant="subtitle1">Long Value</Typography>
+                            <TextValidator
+                                placeholder="Long Value"
+                                variant="outlined"
+                                size="small"
+                                style={{width: '100%'}}
+                                value={this.state.formData.address.geolocation.long}
+                                onChange={(e) => {
+                                    let formData = this.state.formData;
+                                    formData.address.geolocation.long = e.target.value;
+                                    this.setState({formData})
+                                }}
+                                validators={['required']}
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={12} md={6} lg={6}>
+                            <Typography variant="subtitle1">Mobile No</Typography>
+                            <TextValidator
+                                placeholder="Mobile No"
+                                variant="outlined"
+                                size="small"
+                                style={{width: '100%'}}
+                                value={this.state.formData.phone}
+                                onChange={(e) => {
+                                    let formData = this.state.formData;
+                                    formData.phone = e.target.value;
+                                    this.setState({formData})
+                                }}
+                                validators={['required']}
+                            />
+                        </Grid>
+                    </Grid>
+                    <Grid container marginTop={"10px"} direction={"row"} alignItems={"center"}
+                          justifyContent={"flex-end"}>
+                        <Button variant={"contained"} color={"warning"}
+                                style={{marginLeft: "10px", marginRight: "10px"}} onClick={this.clearFields}>Clear</Button>
+                        <Button variant={"contained"} color={this.state.btnColor} type={"submit"}
+                                style={{marginLeft: "10px", marginRight: "10px"}}
+                        >{this.state.btnLabel}</Button>
+                    </Grid>
+                </ValidatorForm>
+                <Grid contaner style={{marginTop: '15px'}}>
+                    <TableContainer component={Paper}>
+                        <Table sx={{minWidth: 650}} aria-label="customer table">
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell align="left">Id</TableCell>
+                                    <TableCell align="left">First Name</TableCell>
+                                    <TableCell align="left">Last Name</TableCell>
+                                    <TableCell align="left">Email</TableCell>
+                                    <TableCell align="left">Username</TableCell>
+                                    <TableCell align="left">Password</TableCell>
+                                    <TableCell align="left">City</TableCell>
+                                    <TableCell align="left">Street</TableCell>
+                                    <TableCell align="left">Street No</TableCell>
+                                    <TableCell align="left">Zip Code</TableCell>
+                                    <TableCell align="left">Lat Value</TableCell>
+                                    <TableCell align="left">Long Value</TableCell>
+                                    <TableCell align="left">Mobile No</TableCell>
+                                    <TableCell align="left">Action</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {
+                                    this.state.data.map((row) => (
+                                        <TableRow>
+                                            <TableCell align="left">{row.id}</TableCell>
+                                            <TableCell align="left">{row.name.firstname}</TableCell>
+                                            <TableCell align="left">{row.name.lastname}</TableCell>
+                                            <TableCell align="left">{row.email}</TableCell>
+                                            <TableCell align="left">{row.username}</TableCell>
+                                            <TableCell align="left">{row.password}</TableCell>
+                                            <TableCell align="left">{row.address.city}</TableCell>
+                                            <TableCell align="left">{row.address.street}</TableCell>
+                                            <TableCell align="left">{row.address.number}</TableCell>
+                                            <TableCell align="left">{row.address.zipcode}</TableCell>
+                                            <TableCell align="left">{row.address.geolocation.lat}</TableCell>
+                                            <TableCell align="left">{row.address.geolocation.long}</TableCell>
+                                            <TableCell align="left">{row.phone}</TableCell>
+                                            <TableCell align="left">
+                                                <Tooltip title="Edit">
+                                                    <IconButton
+                                                        onClick={() => {
+                                                            console.log("edit icon clicked!")
+                                                            this.updateUser(row);
+                                                        }}
+                                                    >
+                                                        <EditIcon color="primary" />
+                                                    </IconButton>
+                                                </Tooltip>
+                                                <Tooltip title="Delete">
+                                                    <IconButton
+                                                        onClick={() => {
+                                                            console.log("edit icon clicked!")
+                                                            this.deleteUser(row.id);
+                                                        }}
+                                                    >
+                                                        <DeleteIcon color="primary" />
+                                                    </IconButton>
+                                                </Tooltip>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))
+                                }
 
-                </div>
-            </Box>
-        </div>
-    )
-
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                </Grid>
+                <GDSESnackBar
+                    open={this.state.alert}
+                    onClose={() => {
+                        this.setState({alert: false})
+                    }}
+                    message={this.state.message}
+                    autoHideDuration={3000}
+                    severity={this.state.severity}
+                    variant="filled"
+                />
+                </Box>
+            </>
+        );
+    }
 }
 
 export default User

@@ -1,27 +1,28 @@
-import {BrowserRouter} from "react-router-dom";
-import {Route, Routes} from "react-router";
-import React from "react";
-import LogingSection from "../pages/Loging";
-import DashBoard from "../pages/Main";
+import * as React from "react";
+import Login from "../pages/Login";
+import {Route, Routes} from "react-router-dom";
+import Dashboard from "../pages/Dashboard";
 import User from "../pages/User";
-import Product from "../pages/Product";
-import Cart from "../pages/cart";
-import SignUp from "../pages/Loging/signUp";
+import Products from "../pages/Products";
+import Cart from "../pages/Cart";
+import NotFound from "../pages/NotFound";
 
 function App() {
-  return (
-      <BrowserRouter>
+    return (
         <Routes>
-          <Route exact path='/' element={<LogingSection/>}/>
-          <Route exact path='signUp' element={<SignUp/>}/>
-          <Route exact path='dash' element={<DashBoard/>}/>
-          <Route exact path='users' element={<User/>}/>
-          <Route exact path='product' element={<Product/>}/>
-          <Route exact path='cart' element={<Cart/>}/>
+            <Route exact path="/" element={<Login/>}/>
+            <Route path="signup" element={<User/>}/>
+            <Route path="dashboard" element={<Dashboard/>}/>
+            <Route path="product" element={<Products/>}/>
+            <Route path="cart" element={<Cart/>}/>
+            <Route path="*" element={<NotFound/>}/>
         </Routes>
-      </BrowserRouter>
-
-  );
+        /*<Login/>*/
+        /*<Dashboard/>*/
+        /*<User/>*/
+        /*<Products/>*/
+        /*<Cart/>*/
+    );
 }
 
 export default App;

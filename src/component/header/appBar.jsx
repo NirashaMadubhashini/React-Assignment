@@ -11,7 +11,7 @@ export default function Header() {
             <AppBar position="static">
                 <Toolbar sx={{backgroundColor: "#1565BF"}}>
                     <Typography variant="h5" component="div" sx={{flexGrow: 1, marginLeft: 70,fontFamily:'sans-serif'}}>
-                        Easy Car Rental
+                        DashBoard
                     </Typography>
                     <Button color="inherit">Login</Button>
                 </Toolbar>
