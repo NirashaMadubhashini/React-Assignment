@@ -16,7 +16,6 @@ import { deepOrange, green } from '@mui/material/colors';
 import {toast, ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ProductService from "../../services/ProductService";
-import AdminService from "../../services/AdminService";
 const defaultPosition = toast.POSITION.BOTTOM_CENTER;
 
 
@@ -69,13 +68,13 @@ const Product = ({}) => {
 
     const [btnColor, setBtnColor] = useState('primary');
 
-    const [tblData, setTblData] = useState([]);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
 
         await submitProduct();
     }
+
     useEffect(() => {
         loadData();
     }, [])
