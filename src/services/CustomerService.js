@@ -1,6 +1,7 @@
-import axios from "axios";
+import axios from "../axios";
 
-class CustomerService {
+class UserService {
+
     postUser = async (data) => {
         const promise = new Promise((resolve, reject) => {
             axios.post('users', data)
@@ -16,7 +17,7 @@ class CustomerService {
 
     putUser = async (data, id) => {
         const promise = new Promise((resolve, reject) => {
-            axios.put('users/${id}', data)
+            axios.put(`users/${id}`, data)
                 .then((res) => {
                     return resolve(res);
                 })
@@ -42,7 +43,7 @@ class CustomerService {
 
     deleteUser = async (id) => {
         const promise = new Promise((resolve, reject) => {
-            axios.delete('users/${id}')
+            axios.delete(`users/${id}`)
                 .then((res) => {
                     return resolve(res);
                 })
@@ -54,4 +55,4 @@ class CustomerService {
     }
 }
 
-export default new CustomerService()
+export default new UserService();
