@@ -139,7 +139,7 @@ const Cart = ({}) => {
                 </Grid>
                 <div>
                     <div>
-                        <Button color={btnColor} size="large" type="submit" variant="contained"
+                        <Button color={btnColor} size="large"  variant="contained"
                                 sx={{ml: 15, mt: 5}}>
                             {btnLabel}
                         </Button>
