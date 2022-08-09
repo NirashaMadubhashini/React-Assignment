@@ -178,9 +178,6 @@ class Cart extends Component {
                                 <Link href="signup" underline="none">
                                     <Button  type='submit' color='secondary' variant="contained" size="small" sx={{ml:6}} fullWidth>User</Button>
                                 </Link>
-                                <Link href="cart" underline="none">
-                                    <Button  type='submit' color='secondary' variant="contained" size="small" sx={{ml:7}} fullWidth>Cart</Button>
-                                </Link>
                             </Grid>
                             <Typography variant="h5" component="div" sx={{flexGrow: 1,fontFamily:'sans-serif', marginLeft: 50}}>
                                 User

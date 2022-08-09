@@ -98,9 +98,6 @@ class Products extends Component {
                                 <Link href="dashboard" underline="none">
                                     <Button  type='submit' color='secondary' variant="contained" size="small" sx={{ml:3.5}} fullWidth>DashBoard</Button>
                                 </Link>
-                                <Link href="product" underline="none">
-                                    <Button  type='submit' color='secondary' variant="contained" size="small" sx={{ml:5}} fullWidth>Product</Button>
-                                </Link>
                                 <Link href="signup" underline="none">
                                     <Button  type='submit' color='secondary' variant="contained" size="small" sx={{ml:6}} fullWidth>User</Button>
                                 </Link>
